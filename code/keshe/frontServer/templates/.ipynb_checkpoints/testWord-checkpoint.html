@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>词汇测试</title>
+    <script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.6.0/jquery.js"></script>
+    <script>
+        function selectAll() {
+            $.ajax({
+                url: 'http://42.193.148.6:8000/vocab_test',
+                type: 'get',
+                dataType: 'json',
+                data:  'id='+getCookie("id"),
+                success: function (data) {
+                    let str="";
+                    console.log(data);
+                    for(let i =0;i<data["data"].length;i++){
+                        str+=
+                                `<div class="box"><input type="checkbox" class="word" name="word" id="words-`+i+`" value=`+data["data"][i]["word"]+'>'
+                                +`<label for="words-`+i+`">`+data["data"][i]["word"]+'</label>'+'</div>';
+                            
+                    }
+                    $('#word_box').html(str);
+                },
+                    error: function () {
+                    alert('服务器超时，请重试！');
+                }
+                })
+        }
+        function getCookie(objName) {//获取指定名称的cookie的值
+            var arrStr = document.cookie.split("; ");
+            for (var i = 0; i < arrStr.length; i++) {
+                var temp = arrStr[i].split("=");
+                if (temp[0] == objName) return unescape(temp[1]);  //解码
+            }
+            return "";
+        }      
+        selectAll();
+
+    </script>
+    <style>
+         body{
+            background-image: url(../static/images/page4.1.jpg);
+            background-size: 100% auto;
+            background-repeat: no-repeat; 
+        }
+        *{
+            margin: 0px;
+            padding: 0px;
+        }
+        #word_box{
+            position: relative;
+            display: flex;
+            flex-wrap:wrap;
+            justify-content:space-around;
+            width: 735px;
+            height: 345px;
+            overflow-y:scroll;
+            overflow-x: hidden;
+            top:150px;
+            left: 320px;
+        }
+        .box{
+            width: 180px;
+            height: 60px;
+            font-size:20px;
+            
+        }
+        #btn{
+            width: 120px;
+            height: 64px;
+            position: relative;
+            top:180px;
+            left: 625px;
+        }
+    </style>
+    
+</head>
+<body>
+    <header>
+
+    </header>
+    <div id="big_box">
+        <div id="word_box">
+
+        </div>
+        <input  id="btn" type="image" value="提交" onclick="getWord()" src="../static/images/page4.2.png">
+    </div>
+        
+    <script>
+        var json = {
+            "code": 200, 
+            "msg": "get test", 
+            "data": []
+        };
+        //实际情况中，json对象的值可通过document.getElementByName()来获取用户输入
+        function getWord() {
+            //获取所有的表单选项
+            var arr = document.getElementsByName("word");
+            for (i in arr) {
+                //检测是否勾取
+                if (arr[i].checked) {  //勾上了
+                   json["data"].push({"word":arr[i].value, "flag": true})                   
+                }
+            }
+            json.id=getCookie('id');
+            var a = JSON.stringify(json);
+            console.log(a)
+
+            //传递到后台
+            $.ajax({
+                type: 'POST',
+                data: a,  //json
+                contentType: 'application/json',
+                dataType: 'json',
+                url: 'http://42.193.148.6:8000/vocab_test',
+                success: function (data) {
+                    console.log(data);
+                    alert("发送成功");
+                     var url = "http://42.193.148.6:9000/result";
+                    var data1 = data["data"]["result"];
+                    url = url + "?" + "data" + "=" + data1;
+                    console.log(url);    
+                    window.location = url;   
+                },
+                error: function (e) {
+                    alert("发送失败");
+                }
+            });
+        }
+         function getCookie(objName) {//获取指定名称的cookie的值
+            var arrStr = document.cookie.split("; ");
+            for (var i = 0; i < arrStr.length; i++) {
+                var temp = arrStr[i].split("=");
+                if (temp[0] == objName) return unescape(temp[1]);  //解码
+            }
+            return "";
+        }    
+    </script>
+</body>
+</html>

@@ -1,0 +1,339 @@
+<!doctype html>
+<html>
+<!--
+author:guojunyu
+desc:this demo is about blog.
+-->
+<head>
+  <script src="../static/js/jquery.min.js" type="text/javascript"></script>
+</head>
+<body id='show'>
+</body>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>点击按钮切换内容</title>
+    <style type="text/css">
+        body{
+             overflow-y: hidden;
+        }
+/*         .tab-menu ul{
+            padding: 0;
+            margin: 0;
+        }
+        .tab-menu ul li{
+            display: inline-block;
+            width: 200px;
+            height: 40px;
+            line-height: 40px;
+            text-align: center;
+            cursor: pointer;
+        }
+        .tab-menu ul li.active{
+            background: #749dcf;
+        }
+        .tab-con div{
+            width: 600px;
+            height: 300px;
+            background: #F2F2F2;
+            border: 1px solid #749dcf;;
+            display: none;
+            padding: 15px;
+ 
+        }
+        .tab-con div:first-child{
+            display: block;
+        } */
+        .button1{
+            position: relative; /** 相对布局 **/
+        } 
+
+        .funk{
+
+            width:517px;
+            height:243px;
+
+            background:url('/static/images/page3.1.png') no-repeat;
+            cursor:pointer; 
+
+            border:0px;
+        }
+        .funk:active{
+/*             background:#41D661; */
+            background:url('/static/images/page3.4.png');
+        }
+        
+        .funk2{
+
+
+            width:517px;
+            height:243px;
+
+            background:url('/static/images/page3.2.png') no-repeat;
+            cursor:pointer; 
+
+            border:0px;
+        }
+        .funk2:active{
+/*             background:#41D661; */
+            background:url('/static/images/page3.3.png');
+        }
+        
+        
+        .but_box{
+            
+            margin:100px;
+            margin-top:200px;
+/*             display:flex;
+            flex:1; */
+            text-align:center;
+                        z-index:6;
+/*             justify-content:space-around;
+            align-content:flex-end; */
+        }
+        .word{
+
+            font-size:100px;
+            position:relative;
+            margin:0 auto;
+            text-align:center;
+            top:-100%;
+/*             width:300px;
+            height:70px; */
+/*             text-align:center */
+        }
+        .ryh{
+            display:none;
+            position:absolute;
+            width:1520px;
+            height:700px;
+            z-index:-12;
+        }
+    </style>
+</head>
+<body>
+<!-- <div id="ryh">
+    <image class="ryh" src="/static/images/page3.5.png"/>
+</div>
+    
+<audio preload loop id="vd">
+
+  <source src="/static/music/Sorry i like you.mp3" type="audio/mpeg">
+
+</audio>
+<audio preload id="understandvd">
+
+  <source src="/static/music/understand2.mp3" type="audio/mpeg">
+
+</audio>
+<audio preload id="no_understandvd">
+
+  <source src="/static/music/understand.mp3" type="audio/mpeg">
+
+</audio> -->
+    
+<div id="box" class="word" style="top:150px"></div>
+    
+    <div id="but_box" class="but_box" >
+        <button id="no_understand" class="funk" >
+
+        </button>
+        <button id="understand" class="funk2">
+
+        </button>
+
+    </div>
+    
+<!-- <input type="images"src="课设/frontServer/static/images/page_bg.png"> -->
+
+<script type="text/javascript" src="/static/js/jquery.min.js"></script>
+<script type="text/javascript">
+    
+//         var ec = document.createEvent("MouseEvents");
+//         ec.initEvent("click", true, true);
+
+
+    var word=[];
+    word.push("预备！")
+    var temp=0;
+    function selectAll() {
+        $.ajax({
+            //json/data.json
+            url: 'http://43.138.184.214:8000/vocab_test',
+            type: 'get',
+            dataType: 'json',
+            data: 'id='+getCookie("id"),
+            success: function (data) {
+                let str="";
+                console.log(data);
+  
+                for(let i =0;i<data["data"].length;i++) {
+                    word.push(data["data"][i]["word"])
+//                     str+=
+//                         '<div class="box">'+'<input type="checkbox" class="word" name="word" id="words-`+i+`" value='+data["data"][i]["word"]+'>'
+//                         +data["data"][i]["word"]+'</div>';
+                }
+                word.push("结束啦！")
+                $('#form').html(str);
+
+            },
+            error: function () {
+                alert('服务器超时，请重试！');
+            }
+        });
+    }
+    
+        function getCookie(objName) {//获取指定名称的cookie的值
+            var arrStr = document.cookie.split("; ");
+            for (var i = 0; i < arrStr.length; i++) {
+                var temp = arrStr[i].split("=");
+                if (temp[0] == objName) return unescape(temp[1]);  //解码
+            }
+            return "";
+        }      
+    selectAll();
+    
+
+    $('#box').html(word[temp]);
+    
+    //换单词的函数
+    function UnderstandWordChange(){
+        $('#box').html(word[++temp]);
+    }
+    
+    function wordChange(){
+        $('#box').html(word[++temp]);
+    }
+    
+    //鼠标按下事件
+    $('#understand').on("mousedown",function(){
+        $('#understand').css('background','url("/static/images/page3.3.png") no-repeat');
+        UnderstandWordChange();
+        var music = document.getElementById("understandvd");//获取ID  
+        music.currentTime = 0;
+        music.play();
+                $('.ryh').css('display','block');
+    });
+    
+    //鼠标抬起事件
+    $('#understand').on("mouseup",function(){
+　　　　　$('#understand').css('background','url("/static/images/page3.2.png") no-repeat');
+                    $('.ryh').css('display','none');
+    });
+    
+    //键盘按下事件
+    $(document).keydown(function(event){
+        console.log(event.keyCode);
+　　　　if(event.keyCode == 32){
+            $('#understand').css('background','url("/static/images/page3.3.png") no-repeat');
+            UnderstandWordChange();
+            var music = document.getElementById("understandvd");//获取ID  
+            music.currentTime = 0;
+            music.play();
+        $('.ryh').css('display','block');
+　　　　}
+　　});
+    
+    //键盘抬起事件
+    $(document).keyup(function(event){
+　　　　if(event.keyCode == 32){
+　　　　　  $('#understand').css('background','url("/static/images/page3.2.png") no-repeat');
+            $('.ryh').css('display','none');
+　　　　}
+　　});
+    
+    
+    
+
+    
+///////////////////////////////////////////////////////////////////////////////////////////////////////////
+    
+    $('#no_understand').on("click",function(){
+        $('#box').html(word[++temp]);
+    });
+        //换单词的函数
+    function No_UnderstandWordChange(){
+        $('#box').html(word[++temp]);
+    }
+    
+//     function wordChange(){
+//         $('#box').html('刚刚是林锦天会的单词'+word[++temp]);
+//     }
+    
+    //鼠标按下事件
+    $('#no_understand').on("mousedown",function(){
+        console.log("mousedown");
+        $('#no_understand').css('background','url("/static/images/page3.4.png") no-repeat');
+        No_UnderstandWordChange();
+        
+        var music = document.getElementById("no_understandvd");//获取ID
+        
+        music.currentTime = 0;
+        music.play();
+        
+                $('.ryh').css('display','block');
+        console.log("mousedown");
+    });
+    
+    //鼠标抬起事件
+    $('#no_understand').on("mouseup",function(){
+        console.log("mouseup");
+　　　　　$('#no_understand').css('background','url("/static/images/page3.1.png") no-repeat');
+                $('.ryh').css('display','none');
+    });
+    
+    //键盘按下事件
+    $(document).keydown(function(event){
+        console.log(event.keyCode);
+　　　　if(event.keyCode == 16){
+            $('#no_understand').css('background','url("/static/images/page3.4.png") no-repeat');
+            No_UnderstandWordChange();
+            var music = document.getElementById("no_understandvd");//获取ID  
+            music.currentTime = 0;
+            music.play();
+                $('.ryh').css('display','block');
+　　　　}
+　　});
+    
+    //键盘抬起事件
+    $(document).keyup(function(event){
+　　　　if(event.keyCode == 16){
+　　　　　  $('#no_understand').css('background','url("/static/images/page3.1.png") no-repeat');
+                $('.ryh').css('display','none');
+　　　　}
+　　});
+
+    //检测音频有没有播放！
+    window.onload = function(){
+             setInterval("toggleSound()",100);
+        }
+
+    function toggleSound() {
+                var music = document.getElementById("vd");//获取ID  
+                    
+                if (music.paused) { //判读是否播放  
+                    music.paused=false;
+                    music.volume = 0.1;
+                    music.play(); //没有就播放 
+
+                }    
+        }
+
+    //
+
+    
+    $(function () {
+        $('.tab-menu li').click(function () {
+            $(this).addClass('active').siblings().removeClass('active');
+//          $('.tab-top li').eq($(this).index()).addClass('active').siblings().removeClass('active');  tab按钮第二种写法
+            var index=$(this).index();
+            $(".tab-con div").eq(index).show().siblings().hide();
+        })
+    })
+</script>
+
+</body>
+</html>
+
+

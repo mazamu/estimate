@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>词汇测试--个人信息登记</title>
+    <script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.6.0/jquery.js"></script>
+
+    <style type="text/css">
+        body{
+            position: relative;
+            background-image :url(../static/images/page1.1.jpg);
+            /* 图片铺满整个背景 */
+            background-size: 100% auto;
+            background-repeat: no-repeat;
+        }
+        .data{
+            /* background-color: rgb(0, 0, 0); */
+            width: 275px;
+            height: 30px;
+            margin:3px auto ;
+            border: solid 5px;
+            border-radius: 5px;
+            border-color: rgb(0,0,0);
+            /* color: white; */
+            font-size:20px;
+        } 
+        #cet4,#cet6{
+            width: 140px;
+        }
+        .box{
+            position: absolute;
+            left: 570px;
+            top:230px;
+            width: 425px;
+            height: 165px;
+            background-color: white;
+        }
+        
+       
+        #submit{
+            width: 120px;
+            height: 60px;
+            position: relative;
+            top: 350px;
+            left: 740px;
+        }
+    </style>
+
+</head>
+
+<body>
+    <form id="form">
+        <div class="box">
+            <!-- autocomplete="off" 关闭自动填充 -->
+            <input type="text" name="sid" id="sid"  class="data" required autocomplete="off"><br>
+
+            <input type="text" name="username" id="username"   class="data" required autocomplete="off"><br>
+
+            <input type="number" name="cet4" id="cet4"   class="data" required autocomplete="off" min="0" max="750"><br>
+
+            <input type="number" name="cet6" id="cet6"  class="data" required autocomplete="off" min="0" max="750"><br>
+        </div>
+        <input type="image" value="提交" id="submit" src="../static/images/page1.2.png" onclick="getInformation()">
+    </form>
+    <script>
+        function getInformation(){
+            let json = {"code":200,"msg":"get test"};
+        //获取所有的表单选项
+        let arr1 = document.getElementById("sid");
+        let arr2 = document.getElementById("username");
+        let arr3 = document.getElementById("cet4");
+        let arr4 = document.getElementById("cet6");
+
+        json.data={"sid": arr1.value,"username":arr2.value,"cet4":arr3.value,"cet6":arr4.value};
+        let a = JSON.stringify(json);
+       // alert(a);  //弹窗显示
+        $("form").submit(function(e) {
+            //传递到后台
+            $.ajax({
+                type: 'POST',
+                data: a,  //json
+                contentType: 'application/json',
+                dataType: 'json',
+                url: 'http://42.193.148.6:8000/login',
+                success: function (data) {
+                    //alert("发送成功");
+                    addCookie("id",data['data']['id'],0);
+                    window.location.href="http://42.193.148.6:9000/first";
+                },
+                error: function (e) {
+                    alert("发送失败");
+                    window.location.href="http://42.193.148.6:9000/login2";
+                }
+            });
+            return false;//阻止表单提交
+    })
+        }
+        function addCookie(objName, objValue, objHours) {
+            var str = objName + "=" + escape(objValue); //编码
+            if (objHours > 0) {//为0时不设定过期时间，浏览器关闭时cookie自动消失
+                var date = new Date();
+                var ms = objHours * 3600 * 1000;
+                date.setTime(date.getTime() + ms);
+                str += "; expires=" + date.toGMTString();
+            }
+            document.cookie = str;
+        }
+        
+    </script>
+
+</body>
+</html>

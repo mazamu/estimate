@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>测试结果</title>
+    <script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.6.0/jquery.js"></script>
+
+    <style>
+        body{
+            overflow-x: hidden;
+        } 
+        *{
+            margin: 0px;
+            padding:0px;
+        }
+        #box{
+            position: relative;
+        }
+        #box div{
+            position: absolute;
+            top:0px;
+            left:0px;
+           
+        }
+        #1{
+            z-index: 1;
+        }
+        #2{
+            z-index: 2;
+
+        }
+        #3{
+            z-index: 3;
+        }
+        #box div img{
+            width: 1340px;
+            height: 580px;
+        }
+        #num{
+            z-index:5 ;
+            margin-top: 170px;
+            margin-left: 480px;
+        }
+        span{
+            font-size: 150px;
+        }
+    </style>
+
+</head>
+<body>
+    <div id="words_num" >
+
+    </div>
+    <div id="box" >
+        <div id="1">
+            <img src="../static/images/尺子.jpg" >
+        </div>
+        <div id="2">
+            <img src="../static/images/白布.png">
+        </div>
+        <div id="3">
+            <img src="../static/images/背景.png">
+        </div>
+        <div id="num">
+            <span>
+    
+            </span>
+        </div>          
+    </div>
+
+    
+</body>
+<script>
+    var url = document.location.toString();
+    //console.log(url);
+    var urlParmStr = url.slice(url.indexOf('?')+1);//获取问号后所有的字符串
+    //console.log(urlParmStr);
+    //console.log(typeof(urlParmStr));
+    var data = parseInt(urlParmStr.slice(5));
+    console.log(data);
+    var change_data = 0;
+    //var data =5000;
+    //var count1 = 0;
+    var span = document.getElementsByTagName("span")[0];
+    //console.log(span);
+    //span.innerHTML = data;
+    //console.log(span.innerHTML);
+
+    function change(){
+            span.innerHTML = change_data;
+            change_data++;
+           // count1++;
+            var id1 = window.setTimeout(change,0.1);
+             //距离达到时停止
+            if(change_data==data+1){
+            window.clearInterval(id1);
+        }
+        }      
+        //重复不断调用函数      
+        window.setTimeout(change,10);
+
+    var img;//图像对象
+    var imgLeft;//图像左边的位置
+    var delta =1 ;//每次移动的距离
+    var all_delta;//总的移动距离
+    var count2 = 0;
+
+    window.onload = function(){
+        img = document.getElementById("2");
+        imgLeft = img.offsetLeft;        
+    };
+    
+        //计算对应词汇量要走的长度
+        all_delta = parseInt(data/371*20);
+        console.log(all_delta);
+
+        function move(){
+            img.style.left = imgLeft+delta+"px";
+            //移动位置后需要重新修改左边的位置
+            imgLeft = img.offsetLeft;
+            count2++;
+            var id2 = window.setTimeout(move,100);
+             //距离达到时停止
+            if(count2==all_delta){
+            window.clearInterval(id2);
+        }
+        }      
+        //重复不断调用函数      
+        window.setTimeout(move,100);
+       
+        
+       
+</script>
+</html>

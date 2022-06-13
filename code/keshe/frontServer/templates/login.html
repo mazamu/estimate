@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>词汇测试--个人信息登记</title>
+    <script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.6.0/jquery.js"></script>
+
+    <style type="text/css">
+        #title,#description{
+            text-align: center;
+            color: white;
+        }
+        .data{
+            background-color: rgb(36, 36, 69);
+            width: 200px;
+            position:relative;
+            margin:20px auto 20px auto;
+            padding: 5px;
+            border-style: double;
+            color: white;
+        }
+        .all{
+            background-color: rgb(61, 61, 140);
+            position: relative;
+            padding: 20px;
+            text-align: center;
+        }
+        .label{
+           width: 75px;
+           height: 30px;
+            color: white;
+        }
+       #cet4,#cet6{
+            width: 200px;
+            height: 20px;
+            border-radius: 5px;
+        }
+        #submit{
+            width: 500px;
+            height: 35px;
+            border-radius: 5px;
+            color: white;
+            background-color: rgb(55, 175, 101);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="all">
+        <div >
+            <h1 id="title">英语词汇量测试--个人信息录入</h1>
+            <p id="description">本录入仅用于返回结果时使用，未经允许不会泄露，请放心~</p>
+        </div>
+            <label for="sid" class="label" >学 号: </label>
+            <input type="text" name="sid" id="sid" value="" class="data" required/><br>
+
+            <label for="username" class="label">Name : </label>
+                <input type="text" name="username" id="username" value=""  class="data"><br>
+
+            <label for="cet4" class="label">CET4 : </label>
+                <input type="text" name="cet4" id="cet4"   value=""  class="data" required/><br>
+
+            <label for="cet6" class="label" >CET6 : </label>
+                <input type="text" name="cet6" id="cet6"  value=""  class="data" required/><br>
+
+            <input type="submit" value="提交" id="submit" onclick="getWord2()">
+    </div>
+
+    <script>
+        let json = {"code":200,"msg":"get test"};
+        //实际情况中，json对象的值可通过document.getElementByName()来获取用户输入
+        function getWord2() {
+            //获取所有的表单选项
+            let arr1 = document.getElementById("sid");
+            let arr2 = document.getElementById("username");
+            let arr3 = document.getElementById("cet4");
+            let arr4 = document.getElementById("cet6");
+
+            json.data={"sid": arr1.value,"username":arr2.value,"cet4":arr3.value,"cet6":arr4.value};
+
+            let a = JSON.stringify(json);
+            alert(a);  //弹窗显示
+
+            //传递到后台
+            $.ajax({
+                type: 'POST',
+                data: a,  //json
+                contentType: 'application/json',
+                dataType: 'json',
+                url: 'http://43.138.184.214:8000/login',
+                success: function (data) {
+                    console.log(data['data']['id'])
+                    addCookie("id",data['data']['id'],0);
+                    
+                    alert("发送成功");
+                    window.location.href="http://43.138.184.214:9000/ceshi";
+                },
+                error: function (e) {
+                    alert("发送失败");
+                    window.location.href="http://43.138.184.214:9000/ceshi";
+                }
+            });
+       }
+        
+        function addCookie(objName, objValue, objHours) {
+            var str = objName + "=" + escape(objValue); //编码
+            if (objHours > 0) {//为0时不设定过期时间，浏览器关闭时cookie自动消失
+                var date = new Date();
+                var ms = objHours * 3600 * 1000;
+                date.setTime(date.getTime() + ms);
+                str += "; expires=" + date.toGMTString();
+            }
+            document.cookie = str;
+        }
+    </script>
+
+</body>
+</html>

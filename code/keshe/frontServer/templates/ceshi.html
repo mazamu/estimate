@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>英语词汇量测试</title>
+<!--        <script src="jquery-3.6.0.min.js"></script>-->
+    <script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.6.0/jquery.js"></script>
+    <script>
+        function selectAll() {
+            $.ajax({
+                url: 'http://43.138.184.214:8000/vocab_test',
+                type: 'get',
+                dataType: 'json',
+                data: 'id='+1,
+                success: function (data) {
+                    if(data.code==200){
+                        let str="";
+                        console.log(data);
+                        for(let i =0;i<data["data"].length;i++) {
+                            str+=
+                                `<div class="box"><input type="checkbox" class="word" name="word" id="words-`+i+`" value=`+data["data"][i]["word"]+'>'
+                                +`<label for="words-`+i+`">`+data["data"][i]["word"]+'</label>'+'</div>';
+                        }
+                        $('#form').html(str);
+                    }
+                    else{
+                        alert(data["msg"]);
+                    }
+
+                },
+                error: function () {
+                    alert('服务器超时，请重试！');
+                }
+            });
+        }
+        selectAll();
+
+
+        //生成json
+        var json = {"code":200,"msg":"get test",data:[],'id':[]};
+        //实际情况中，json对象的值可通过document.getElementByName()来获取用户输入
+        function getWord() {
+            //获取所有的表单选项
+            var arr = document.getElementsByName("word");
+            for (i in arr) {
+                //检测是否获取成功
+                if (arr[i].checked) {  //勾上了
+                    let flag=true;
+                    for(let d=0;d<json["data"].length;d++){
+                        if(json["data"][d]["word"]==arr[i].value){
+                            flag=false;
+                        }
+                    }
+                    if(flag==true){
+                        json["data"].push({"word": arr[i].value, "flag": true});
+                    }
+                }
+            }
+            json.id=getCookie('id');
+            var a = JSON.stringify(json);
+            alert(a);  //弹窗显示
+            console.log(a)
+            
+            //传递到后台
+            $.ajax({
+                type: 'POST',
+                data: a,  //json
+                contentType: 'application/json',
+                dataType: 'json',
+                url: 'http://43.138.184.214:8000/vocab_test',
+                success: function (data) {
+                    if(data.code==200){
+                        alert("发送成功");
+                        alert(data.msg);  //post
+                        alert(data.data.result)  //单词量
+                    }
+                },
+                error: function (e) {
+                    alert("发送失败");
+                }
+            });
+        }
+        
+        function getCookie(objName) {//获取指定名称的cookie的值
+            var arrStr = document.cookie.split("; ");
+            for (var i = 0; i < arrStr.length; i++) {
+                var temp = arrStr[i].split("=");
+                if (temp[0] == objName) return unescape(temp[1]);  //解码
+            }
+            return "";
+        }      
+    </script>
+
+    <style>
+        #form{
+            display: flex;
+            flex-wrap:wrap;
+            justify-content:space-around;
+            width: 850px;
+            height: 500px;
+        }
+        .box{
+            width: 125px;
+            height: 40px;
+        }
+
+    </style>
+</head>
+<body>
+
+<br><br>
+<div style="text-align: left;width: 700px;height:450px; margin:0 auto; border: solid">
+    <form action="#" id="form"  style="overflow: scroll;width: 700px;height: 450px">
+    </form>
+
+    <input type="submit" value="提交" onclick="getWord()">
+</div>
+</body>
+</html>
