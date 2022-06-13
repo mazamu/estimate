@@ -26,15 +26,14 @@ class VocabViews(View):
         pro=quiz.quiz()
         print(request.GET)
         get_id=request.GET.get('id')
-        get_id = str(get_id)
         if get_id=="":
             return JsonResponse({'code': 411,'msg':'Please login first'})
         wordList1,wordList2,wordList3 = pro.GetWordcsv()
         
         print(get_id)
-        cache.set(get_id+"wordList1",wordList1,15*60)
-        cache.set(get_id+"wordList2",wordList2,15*60)
-        cache.set(get_id+"wordList3",wordList3,15*60)
+        cache.set(get_id+'wordList1',wordList1,15*60)
+        cache.set(get_id+'wordList2',wordList2,15*60)
+        cache.set(get_id+'wordList3',wordList3,15*60)
         problemList = pro.Problem(wordList1,wordList2,wordList3)
 
         return JsonResponse({'code':200,'msg':'get test','data':problemList})

@@ -9,7 +9,7 @@ class quiz():
         self.cetCounter = 0
         ## 考研词汇答对个数
         self.bstsCounter = 0
-
+    
         ## 雅思权重
         self.weightIelts = 0.6
         ## 四六级权重
@@ -18,6 +18,9 @@ class quiz():
         self.weightBsts = 0.15
         self.path = "/Estimation-vocabulary/code/keshe/backServer/tool/Quiz/"
         
+        self.ieltsNum = 1
+        self.cetsNum = 1
+        self.bstsNum = 1
     ## 读取每个词库的csv文件
     def GetWordcsv(self):
         # 读取雅思词汇
@@ -70,16 +73,18 @@ class quiz():
         cetrightCount = 0
         bstrightCount = 0
         
-        for i in range(len(answer)):
-            strTemp = str(answer[i]['word'])
-            if answer[i]['flag'] == True and strTemp in wordList1:
-                ieltsrightCount += 1
-            elif answer[i]['flag'] == True and strTemp in wordList2:
-                cetrightCount += 1
-            elif answer[i]['flag'] == True and strTemp in wordList3:
-                bstrightCount += 1
-            else:
-                continue
+        if answer and wordList1 and wordList2 and wordList3:
+            for i in range(len(answer)):
+                if answer[i]:
+                    strTemp = str(answer[i]['word'])
+                    if answer[i]['flag'] == True and strTemp in wordList1:
+                        ieltsrightCount += 1
+                    elif answer[i]['flag'] == True and strTemp in wordList2:
+                        cetrightCount += 1
+                    elif answer[i]['flag'] == True and strTemp in wordList3:
+                        bstrightCount += 1
+                    else:
+                        continue
         return ieltsrightCount, cetrightCount, bstrightCount
 
     ## 分析答卷结果（预估词汇量）
